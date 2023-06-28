@@ -2,3 +2,5 @@ Makefile
 
 docker-compose.yml
 
+local.env
+
