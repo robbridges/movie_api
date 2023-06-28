@@ -17,14 +17,19 @@ type PostgressConfig struct {
 }
 
 // Open will open a sql connection with the provided Postgres. Callers will need to ensure it's closed
-func (app *application) Open(config PostgressConfig) (*sql.DB, error) {
+func (app *application) Open(cfg PostgressConfig) (*sql.DB, error) {
 	db, err := sql.Open(
 		"pgx",
-		app.config.db.dsn,
+		cfg.String(),
 	)
 	if err != nil {
 		return nil, fmt.Errorf("error Opening DB: %w", err)
 	}
+
+	db.SetMaxOpenConns(app.config.db.maxOpenConns)
+	// Set the maximum number of idle connections in the pool. Again, passing a value // less than or equal to 0 will mean there is no limit. db.SetMaxIdleConns(cfg.db.maxIdleConns)
+
+	db.SetMaxIdleConns(app.config.db.maxIdleConns)
 	return db, nil
 }
 
@@ -36,7 +41,7 @@ func (cfg PostgressConfig) String() string {
 func DefaultPostgesTestConfig() PostgressConfig {
 	return PostgressConfig{
 		Host:     viper.GetString("TEST_DATABASE_HOST"),
-		Port:     viper.GetString("TEST_DATABASE_PORT"), // Update the key to "TEST_DATABASE_PORT"
+		Port:     viper.GetString("TEST_DATABASE_PORT"),
 		User:     viper.GetString("TEST_DATABASE_USER"),
 		Password: viper.GetString("TEST_DATABASE_PASSWORD"),
 		Database: viper.GetString("TEST_DATABASE"),
