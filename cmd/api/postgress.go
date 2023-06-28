@@ -1,10 +1,12 @@
 package main
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	_ "github.com/jackc/pgx/v4/stdlib"
 	"github.com/spf13/viper"
+	"time"
 )
 
 type PostgressConfig struct {
@@ -30,6 +32,26 @@ func (app *application) Open(cfg PostgressConfig) (*sql.DB, error) {
 	// Set the maximum number of idle connections in the pool. Again, passing a value // less than or equal to 0 will mean there is no limit. db.SetMaxIdleConns(cfg.db.maxIdleConns)
 
 	db.SetMaxIdleConns(app.config.db.maxIdleConns)
+
+	duration, err := time.ParseDuration(app.config.db.maxIdleTime)
+	if err != nil {
+		return nil, err
+	}
+	// Set the maximum idle timeout.
+	db.SetConnMaxIdleTime(duration)
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	err = db.PingContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	err = db.Ping()
+	if err != nil {
+		fmt.Println("Failed to ping the database:", err)
+	}
+
 	return db, nil
 }
 

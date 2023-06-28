@@ -76,8 +76,6 @@ func main() {
 	err = db.Ping()
 	if err != nil {
 		fmt.Println("Failed to ping the database:", err)
-	} else {
-		fmt.Println("Successfully pinged the database!")
 	}
 
 	logger.Printf("Connected to db")
