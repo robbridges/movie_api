@@ -17,10 +17,10 @@ type PostgressConfig struct {
 }
 
 // Open will open a sql connection with the provided Postgres. Callers will need to ensure it's closed
-func Open(config PostgressConfig) (*sql.DB, error) {
+func (app *application) Open(config PostgressConfig) (*sql.DB, error) {
 	db, err := sql.Open(
 		"pgx",
-		config.String(),
+		app.config.db.dsn,
 	)
 	if err != nil {
 		return nil, fmt.Errorf("error Opening DB: %w", err)

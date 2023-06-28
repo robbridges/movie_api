@@ -59,7 +59,8 @@ func main() {
 		WriteTimeout: 10 * time.Second,
 	}
 	dbConfig := DefaultPostgesTestConfig()
-	db, err := Open(dbConfig)
+	cfg.db.dsn = dbConfig.String()
+	db, err := app.Open(dbConfig)
 	if err != nil {
 		logger.Fatal(err)
 	}
