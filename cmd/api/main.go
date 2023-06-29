@@ -6,6 +6,7 @@ import (
 	_ "github.com/lib/pq"
 	"github.com/spf13/viper"
 	"log"
+	"movie_api/internal/data"
 	"net/http"
 	"os"
 	"time"
@@ -28,6 +29,7 @@ type config struct {
 type application struct {
 	config config
 	logger *log.Logger
+	models data.Models
 }
 
 func init() {
@@ -77,6 +79,8 @@ func main() {
 	if err != nil {
 		fmt.Println("Failed to ping the database:", err)
 	}
+
+	app.models = data.NewModels(db)
 
 	logger.Printf("Connected to db")
 
