@@ -32,7 +32,7 @@ type application struct {
 	models data.Models
 }
 
-func init() {
+func main() {
 	viper.SetConfigFile("local.env")
 	viper.AddConfigPath("./")
 	viper.AutomaticEnv()
@@ -40,9 +40,7 @@ func init() {
 	if err := viper.ReadInConfig(); err != nil {
 		panic(fmt.Errorf("init: %w", err))
 	}
-}
 
-func main() {
 	var cfg config
 
 	flag.IntVar(&cfg.port, "port", 8080, "API server port")
