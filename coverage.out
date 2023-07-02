@@ -136,4 +136,4 @@ movie_api/cmd/api/postgress.go:51.16,53.3 1 0
 movie_api/cmd/api/postgress.go:55.2,55.16 1 0
 movie_api/cmd/api/postgress.go:58.44,61.2 1 0
 movie_api/cmd/api/postgress.go:63.49,72.2 1 0
-movie_api/cmd/api/routes.go:8.53,22.2 9 0
+movie_api/cmd/api/routes.go:8.53,22.2 9 1
