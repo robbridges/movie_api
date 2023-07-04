@@ -185,4 +185,15 @@ func TestReadInt(t *testing.T) {
 		t.Errorf("Expected %d, but got %d", expected, result)
 	}
 
+	qs = url.Values{"key": []string{"invalid"}}
+	expected = defaultValue
+	result = app.readInt(qs, "key", defaultValue, v)
+	if result != expected {
+		t.Errorf("Expected %d, but got %d", expected, result)
+	}
+
+	if len(v.Errors) == 0 {
+		t.Errorf("Error should have been added")
+	}
+
 }
