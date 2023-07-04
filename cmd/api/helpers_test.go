@@ -5,8 +5,10 @@ import (
 	"context"
 	"encoding/json"
 	"github.com/julienschmidt/httprouter"
+	"movie_api/internal/validator"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"reflect"
 	"testing"
 )
@@ -119,4 +121,68 @@ func TestReadJSON(t *testing.T) {
 	if age, ok := dst["age"].(float64); !ok || int(age) != expectedAge {
 		t.Errorf("Unexpected age value. Expected: %d, Got: %f", expectedAge, age)
 	}
+}
+
+func TestReadString(t *testing.T) {
+	app := &application{}
+
+	// Test case 1: Value exists in query string
+	qs := url.Values{"key": []string{"value"}}
+	expected := "value"
+	result := app.readString(qs, "key", "defaultValue")
+	if result != expected {
+		t.Errorf("Expected %q, but got %q", expected, result)
+	}
+
+	// Test case 2: Value does not exist in query string, return default value
+	qs = url.Values{}
+	expected = "defaultValue"
+	result = app.readString(qs, "key", "defaultValue")
+	if result != expected {
+		t.Errorf("Expected %q, but got %q", expected, result)
+	}
+}
+
+func TestReadCSV(t *testing.T) {
+	app := &application{}
+
+	// Test case 1: CSV value exists in query string
+	qs := url.Values{"key": []string{"value1,value2,value3"}}
+	expected := []string{"value1", "value2", "value3"}
+	result := app.readCSV(qs, "key", []string{})
+	if !reflect.DeepEqual(result, expected) {
+		t.Errorf("Expected %v, but got %v", expected, result)
+	}
+
+	// Test case 2: CSV value does not exist in query string, return default value
+	qs = url.Values{}
+	defaultValue := []string{"default1", "default2"}
+	expected = defaultValue
+	result = app.readCSV(qs, "key", defaultValue)
+	if !reflect.DeepEqual(result, expected) {
+		t.Errorf("Expected %v, but got %v", expected, result)
+	}
+}
+
+func TestReadInt(t *testing.T) {
+	app := &application{}
+	v := validator.New()
+
+	// Test case 1: Integer value exists in query string
+	qs := url.Values{"key": []string{"42"}}
+	expected := 42
+	result := app.readInt(qs, "key", 0, v)
+	if result != expected {
+		t.Errorf("Expected %d, but got %d", expected, result)
+	}
+
+	// Test case 2: Integer value does not exist in query string, return default value
+	qs = url.Values{}
+	defaultValue := 123
+	expected = defaultValue
+	result = app.readInt(qs, "key", defaultValue, v)
+	if result != expected {
+		t.Errorf("Expected %d, but got %d", expected, result)
+	}
+
 }
