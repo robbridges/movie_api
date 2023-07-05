@@ -4,3 +4,5 @@ docker-compose.yml
 
 local.env
 
+coverage.out
+
