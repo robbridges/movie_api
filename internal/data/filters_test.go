@@ -198,3 +198,34 @@ func TestValidateFiltersSadPaths(t *testing.T) {
 		})
 	}
 }
+
+func TestCalculateMetaData(t *testing.T) {
+	t.Run("no total records should return blank metadata", func(t *testing.T) {
+		filters := Filters{
+			Page:         4,
+			PageSize:     5,
+			Sort:         "id",
+			SortSafeList: []string{"id"},
+		}
+		totalRecords := 0
+		want := Metadata{}
+		got := CalculateMetaData(totalRecords, filters.Page, filters.PageSize)
+		if want != got {
+			t.Errorf("An empty record size should have returned an empty metadata struct: got %+v, want %+v", want, got)
+		}
+	})
+	t.Run("Filled out meta data should return correct records", func(t *testing.T) {
+		filters := Filters{
+			Page:         2,
+			PageSize:     5,
+			Sort:         "id",
+			SortSafeList: []string{"id"},
+		}
+		totalRecords := 10
+		want := Metadata{CurrentPage: filters.Page, PageSize: filters.PageSize, FirstPage: 1, LastPage: 2, TotalRecords: totalRecords}
+		got := CalculateMetaData(totalRecords, filters.Page, filters.PageSize)
+		if want != got {
+			t.Errorf("got %+v, want %+v", got, want)
+		}
+	})
+}
