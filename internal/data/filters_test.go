@@ -77,6 +77,34 @@ func TestFilters_SortDirection(t *testing.T) {
 	})
 }
 
+func TestFilters_Limit(t *testing.T) {
+	filters := Filters{
+		Page:         2,
+		PageSize:     3,
+		Sort:         "id",
+		SortSafeList: []string{"id"},
+	}
+	want := 3
+	got := filters.Limit()
+	if got != want {
+		t.Errorf("Incorrect filter size returned, got: %d, want %d", got, want)
+	}
+}
+
+func TestFilters_Offset(t *testing.T) {
+	filters := Filters{
+		Page:         4,
+		PageSize:     5,
+		Sort:         "id",
+		SortSafeList: []string{"id"},
+	}
+	want := 15
+	got := filters.Offset()
+	if got != want {
+		t.Errorf("Incorrect filter size returned, got: %d, want %d", got, want)
+	}
+}
+
 func TestValidateFiltersSadPaths(t *testing.T) {
 	tests := []struct {
 		name       string
