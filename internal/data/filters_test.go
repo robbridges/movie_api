@@ -21,6 +21,37 @@ func TestValidateFilters(t *testing.T) {
 	})
 }
 
+func TestSortColumnSafeValue(t *testing.T) {
+	filters := Filters{
+		Sort:         "safe",
+		SortSafeList: []string{"safe"},
+	}
+	// no panic should be reached, this is safe
+	defer func() {
+		if r := recover(); r != nil {
+			t.Error("Expected no panic, but a panic occurred")
+		}
+	}()
+
+	filters.SortColumn()
+}
+
+func TestSortColumnUnsafeValue(t *testing.T) {
+	filters := Filters{
+		Sort:         "unsafe",
+		SortSafeList: []string{"safe"},
+	}
+
+	// we expect this panic to hit.
+	defer func() {
+		if r := recover(); r == nil {
+			t.Error("Expected a panic, but no panic occurred")
+		}
+	}()
+
+	filters.SortColumn()
+}
+
 func TestValidateFiltersSadPaths(t *testing.T) {
 	tests := []struct {
 		name       string
