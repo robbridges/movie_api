@@ -52,6 +52,31 @@ func TestSortColumnUnsafeValue(t *testing.T) {
 	filters.SortColumn()
 }
 
+func TestFilters_SortDirection(t *testing.T) {
+	t.Run("Should return ASC", func(t *testing.T) {
+		filter := Filters{
+			Sort:         "runtime",
+			SortSafeList: []string{"runtime, -runtime"},
+		}
+		want := "ASC"
+		got := filter.SortDirection()
+		if want != got {
+			t.Errorf("Test sort Direction: got: %s, want %s", got, want)
+		}
+	})
+	t.Run("Should return DESC", func(t *testing.T) {
+		filter := Filters{
+			Sort:         "-runtime",
+			SortSafeList: []string{"runtime, -runtime"},
+		}
+		want := "DESC"
+		got := filter.SortDirection()
+		if want != got {
+			t.Errorf("Test sort Direction: got: %s, want %s", got, want)
+		}
+	})
+}
+
 func TestValidateFiltersSadPaths(t *testing.T) {
 	tests := []struct {
 		name       string
