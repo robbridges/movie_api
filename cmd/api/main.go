@@ -5,8 +5,8 @@ import (
 	"fmt"
 	_ "github.com/lib/pq"
 	"github.com/spf13/viper"
-	"log"
 	"movie_api/internal/data"
+	"movie_api/internal/jsonlog"
 	"net/http"
 	"os"
 	"time"
@@ -28,7 +28,7 @@ type config struct {
 
 type application struct {
 	config config
-	logger *log.Logger
+	logger *jsonlog.Logger
 	models data.Models
 }
 
@@ -50,7 +50,7 @@ func main() {
 	flag.StringVar(&cfg.db.maxIdleTime, "db-max-idle-time", "15m", "PostgreSQL max connection idle time")
 	flag.Parse()
 
-	logger := log.New(os.Stdout, "", log.Ldate|log.Ltime)
+	logger := jsonlog.New(os.Stdout, jsonlog.LevelInfo)
 
 	app := &application{
 		config: cfg,
@@ -69,7 +69,7 @@ func main() {
 
 	db, err := app.Open(dbConfig)
 	if err != nil {
-		logger.Fatal(err)
+		logger.PrintFatal(err, nil)
 	}
 	defer db.Close()
 
@@ -80,12 +80,15 @@ func main() {
 
 	app.models = data.NewModels(db)
 
-	logger.Printf("Connected to db")
+	logger.PrintInfo("Connected to db", nil)
 
-	logger.Printf("starting %s server on %s", cfg.env, srv.Addr)
+	logger.PrintInfo("starting server", map[string]string{
+		"addr": srv.Addr,
+		"env":  cfg.env,
+	})
 
 	err = srv.ListenAndServe()
 	if err != nil {
-		logger.Fatal(err)
+		logger.PrintFatal(err, nil)
 	}
 }

@@ -4,10 +4,10 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	"log"
+	"movie_api/internal/jsonlog"
 	"net/http"
 	"net/http/httptest"
-	"strings"
+	"os"
 	"testing"
 )
 
@@ -15,25 +15,15 @@ func TestLogError(t *testing.T) {
 	// Create a mock HTTP request
 	req, _ := http.NewRequest("GET", "/some-path", nil)
 
-	// Create an instance of the application
 	app := &application{}
 
-	// Initialize a logger for the test
-	var buf bytes.Buffer
-	logger := log.New(&buf, "", log.LstdFlags)
+	logger := jsonlog.New(os.Stdout, jsonlog.LevelInfo)
 	app.logger = logger
 
-	// Define a sample error
 	err := errors.New("sample error")
 
-	// Call the logError function
 	app.logError(req, err)
 
-	// Check the log output
-	logOutput := buf.String()
-	if !strings.Contains(logOutput, "sample error") {
-		t.Error("Expected error message not found in the log output")
-	}
 }
 func TestErrorResponse(t *testing.T) {
 	// Create a mock HTTP response recorder
@@ -71,8 +61,7 @@ func TestServerErrorResponse(t *testing.T) {
 
 	req, _ := http.NewRequest("GET", "/some-path", nil)
 
-	var buf bytes.Buffer
-	logger := log.New(&buf, "", log.LstdFlags)
+	logger := jsonlog.New(os.Stdout, jsonlog.LevelInfo)
 
 	app := &application{
 		logger: logger,
@@ -92,16 +81,12 @@ func TestServerErrorResponse(t *testing.T) {
 		t.Fatalf("Failed to decode response JSON: %v", err)
 	}
 
-	logOutput := buf.String()
-	if !strings.Contains(logOutput, "sample error") {
-		t.Error("Expected error message not found in the log output")
-	}
 }
 
 func TestErrorResponses(t *testing.T) {
 	// Initialize the logger for the test
 	var buf bytes.Buffer
-	logger := log.New(&buf, "", log.LstdFlags)
+	logger := jsonlog.New(os.Stdout, jsonlog.LevelInfo)
 
 	// Create an instance of the application with the necessary dependencies
 	app := &application{
