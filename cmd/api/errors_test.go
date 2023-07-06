@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"os"
+	"strings"
 	"testing"
 )
 
@@ -24,33 +25,30 @@ func TestLogError(t *testing.T) {
 
 	app.logError(req, err)
 
+	if !strings.Contains(err.Error(), "sample error") {
+		t.Errorf("Expected error message not found")
+	}
+
 }
 func TestErrorResponse(t *testing.T) {
-	// Create a mock HTTP response recorder
 	recorder := httptest.NewRecorder()
 
-	// Create a mock HTTP request
 	req, _ := http.NewRequest("GET", "/some-path", nil)
 
-	// Define the sample error message
 	message := "Sample error message"
 
-	// Call the errorResponse function
 	app.errorResponse(recorder, req, http.StatusBadRequest, message)
 
-	// Check the response status code
 	if recorder.Code != http.StatusBadRequest {
 		t.Errorf("Expected status code %d, got %d", http.StatusBadRequest, recorder.Code)
 	}
 
-	// Decode the response body
 	var response map[string]interface{}
 	err := json.Unmarshal(recorder.Body.Bytes(), &response)
 	if err != nil {
 		t.Fatalf("Failed to decode response JSON: %v", err)
 	}
 
-	// Check the response data
 	if errorMsg, ok := response["error"].(string); !ok || errorMsg != message {
 		t.Errorf("Unexpected error message. Expected: %s, Got: %s", message, errorMsg)
 	}
