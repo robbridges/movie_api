@@ -28,7 +28,7 @@ func TestSortColumnSafeValue(t *testing.T) {
 	}
 	// no panic should be reached, this is safe
 	defer func() {
-		if r := recover(); r != nil {
+		if err := recover(); err != nil {
 			t.Error("Expected no panic, but a panic occurred")
 		}
 	}()
@@ -44,7 +44,7 @@ func TestSortColumnUnsafeValue(t *testing.T) {
 
 	// we expect this panic to hit.
 	defer func() {
-		if r := recover(); r == nil {
+		if err := recover(); err == nil {
 			t.Error("Expected a panic, but no panic occurred")
 		}
 	}()
