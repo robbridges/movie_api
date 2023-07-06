@@ -125,6 +125,12 @@ func TestErrorResponses(t *testing.T) {
 			statusCode: http.StatusConflict,
 			message:    "unable to update the record due to an edit conflict, please try again",
 		},
+		{
+			name:       "RateLimitError",
+			handler:    app.rateLimitExceededResponse,
+			statusCode: http.StatusTooManyRequests,
+			message:    "rate limit exceeded",
+		},
 	}
 
 	for _, tt := range tests {

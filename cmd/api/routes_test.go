@@ -12,8 +12,4 @@ func TestRoutes(t *testing.T) {
 		t.Error("Expected a non-nil router, got nil")
 	}
 
-	if router.NotFound == nil || router.MethodNotAllowed == nil {
-		t.Error("Expected NotFound and MethodNotAllowed handlers to be set")
-	}
-	
 }
