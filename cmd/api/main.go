@@ -7,9 +7,7 @@ import (
 	"github.com/spf13/viper"
 	"movie_api/internal/data"
 	"movie_api/internal/jsonlog"
-	"net/http"
 	"os"
-	"time"
 )
 
 const (
@@ -66,37 +64,7 @@ func main() {
 		logger: logger,
 	}
 
-	srv := &http.Server{
-		Addr:         fmt.Sprintf(":%d", cfg.port),
-		Handler:      app.routes(),
-		IdleTimeout:  time.Minute,
-		ReadTimeout:  5 * time.Second,
-		WriteTimeout: 10 * time.Second,
-	}
-
-	dbConfig := DefaultPostgesTestConfig()
-
-	db, err := app.Open(dbConfig)
-	if err != nil {
-		logger.PrintFatal(err, nil)
-	}
-	defer db.Close()
-
-	err = db.Ping()
-	if err != nil {
-		fmt.Println("Failed to ping the database:", err)
-	}
-
-	app.models = data.NewModels(db)
-
-	logger.PrintInfo("Connected to db", nil)
-
-	logger.PrintInfo("starting server", map[string]string{
-		"addr": srv.Addr,
-		"env":  cfg.env,
-	})
-
-	err = srv.ListenAndServe()
+	err := app.serve()
 	if err != nil {
 		logger.PrintFatal(err, nil)
 	}
