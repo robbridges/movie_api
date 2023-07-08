@@ -7,6 +7,7 @@ import (
 	"github.com/spf13/viper"
 	"movie_api/internal/data"
 	"movie_api/internal/jsonlog"
+	"movie_api/internal/mailer"
 	"os"
 )
 
@@ -27,12 +28,20 @@ type config struct {
 		burst   int
 		enabled bool
 	}
+	smtp struct {
+		host     string
+		port     int
+		username string
+		password string
+		sender   string
+	}
 }
 
 type application struct {
 	config config
 	logger *jsonlog.Logger
 	models data.Models
+	mailer mailer.Mailer
 }
 
 func main() {
@@ -57,11 +66,18 @@ func main() {
 	cfg.limiter.burst = viper.GetInt("LIMITER_BURST")
 	cfg.limiter.enabled = viper.GetBool("LIMITER_ENABLED")
 
+	cfg.smtp.host = viper.GetString("EMAIL_HOST")
+	cfg.smtp.port = viper.GetInt("EMAIL_PORT")
+	cfg.smtp.username = viper.GetString("EMAIL_USERNAME")
+	cfg.smtp.password = viper.GetString("EMAIL_PASSWORD")
+	cfg.smtp.sender = "support@moviebuffs.com"
+
 	logger := jsonlog.New(os.Stdout, jsonlog.LevelInfo)
 
 	app := &application{
 		config: cfg,
 		logger: logger,
+		mailer: mailer.New(cfg.smtp.host, cfg.smtp.port, cfg.smtp.username, cfg.smtp.password, cfg.smtp.sender),
 	}
 
 	err := app.serve()
