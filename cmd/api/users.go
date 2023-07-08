@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"movie_api/internal/data"
 	"movie_api/internal/validator"
 	"net/http"
@@ -52,11 +53,20 @@ func (app *application) registerUserHandler(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	err = app.mailer.Send(user.Email, "user_welcome.tmpl", nil)
-	if err != nil {
-		app.serverErrorResponse(w, r, err)
-		return
-	}
+	go func() {
+		// our middleware will not catch a panic in a background process, we have to do it
+		defer func() {
+			if err := recover(); err != nil {
+				app.logger.PrintError(fmt.Errorf("%s", err), nil)
+			}
+		}()
+
+		err = app.mailer.Send(user.Email, "user_welcome.tmpl", nil)
+		if err != nil {
+			app.logger.PrintError(err, nil)
+			return
+		}
+	}()
 
 	err = app.writeJson(w, http.StatusCreated, envelope{"user": user}, nil)
 	if err != nil {
