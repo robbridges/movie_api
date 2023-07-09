@@ -40,7 +40,17 @@ func (app *application) serve() error {
 
 		defer cancel()
 
-		shutDownError <- srv.Shutdown(ctx)
+		err := srv.Shutdown(ctx)
+		if err != nil {
+			shutDownError <- err
+		}
+
+		app.logger.PrintInfo("completing background tasks", map[string]string{
+			"addr": srv.Addr,
+		})
+
+		app.wg.Wait()
+		shutDownError <- nil
 	}()
 
 	dbConfig := DefaultPostgesTestConfig()

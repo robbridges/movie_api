@@ -9,6 +9,7 @@ import (
 	"movie_api/internal/jsonlog"
 	"movie_api/internal/mailer"
 	"os"
+	"sync"
 )
 
 const (
@@ -42,6 +43,7 @@ type application struct {
 	logger *jsonlog.Logger
 	models data.Models
 	mailer mailer.Mailer
+	wg     sync.WaitGroup
 }
 
 func main() {
