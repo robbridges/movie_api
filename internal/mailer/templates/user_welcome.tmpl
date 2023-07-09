@@ -5,6 +5,11 @@ Hi,
 
 Thanks for signing up for the movie buff api, we're excited to have you board!
 
+Please send a request to the `PUT /v1/users/activated` endpoint with the following JSON
+body to activate your account:
+
+{"token": "{{.activationToken}}"}
+
 Please reach out to us at support@moviebuff.com if you have any questions!
 
 Thanks,
@@ -22,6 +27,10 @@ The movie buff team
 <body>
     <p>Hi,</p>
     <p>Thanks for signing up for the movie buff api, we're excited to have you board!</p>
+    <p>Please send a request to the <code>PUT /v1/users/activated</code> endpoint with the following JSON body to activate your account:</p>
+    <pre><code>
+    {"token": "{{.activationToken}}"}
+    </code></pre>
     <p>Please reach out to us at support@moviebuff.com if you have any questions!</p>
     <p>Thanks,</p>
     <p>The movie buff team</p>

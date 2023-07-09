@@ -14,4 +14,13 @@ func TestNewModels(t *testing.T) {
 	if models.Movies.DB != db {
 		t.Errorf("Expected Movies.DB to be %v, got %v", db, models.Movies.DB)
 	}
+
+	if models.Users.DB != db {
+		t.Errorf("Expected Movies.DB to be %v, got %v", db, models.Movies.DB)
+	}
+
+	if models.Tokens.DB != db {
+		t.Errorf("Expected Movies.DB to be %v, got %v", db, models.Movies.DB)
+	}
+
 }
