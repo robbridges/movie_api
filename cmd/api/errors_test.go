@@ -131,6 +131,12 @@ func TestErrorResponses(t *testing.T) {
 			statusCode: http.StatusTooManyRequests,
 			message:    "rate limit exceeded",
 		},
+		{
+			name:       "InvalidCredentialResponse",
+			handler:    app.invalidCredentialResponse,
+			statusCode: http.StatusUnauthorized,
+			message:    "invalid credentials, please confirm and resubmit",
+		},
 	}
 
 	for _, tt := range tests {
