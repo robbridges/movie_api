@@ -146,7 +146,6 @@ func TestReadString(t *testing.T) {
 func TestReadCSV(t *testing.T) {
 	app := &application{}
 
-	// Test case 1: CSV value exists in query string
 	qs := url.Values{"key": []string{"value1,value2,value3"}}
 	expected := []string{"value1", "value2", "value3"}
 	result := app.readCSV(qs, "key", []string{})
@@ -154,7 +153,6 @@ func TestReadCSV(t *testing.T) {
 		t.Errorf("Expected %v, but got %v", expected, result)
 	}
 
-	// Test case 2: CSV value does not exist in query string, return default value
 	qs = url.Values{}
 	defaultValue := []string{"default1", "default2"}
 	expected = defaultValue
