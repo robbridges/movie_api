@@ -137,6 +137,12 @@ func TestErrorResponses(t *testing.T) {
 			statusCode: http.StatusUnauthorized,
 			message:    "invalid credentials, please confirm and resubmit",
 		},
+		{
+			name:       "InvalidAuthenticationTokenResponse",
+			handler:    app.invalidAuthenticationTokenResponse,
+			statusCode: http.StatusUnauthorized,
+			message:    "invalid or missing authentication token",
+		},
 	}
 
 	for _, tt := range tests {

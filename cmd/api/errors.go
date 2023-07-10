@@ -61,3 +61,9 @@ func (app *application) invalidCredentialResponse(w http.ResponseWriter, r *http
 	message := "invalid credentials, please confirm and resubmit"
 	app.errorResponse(w, r, http.StatusUnauthorized, message)
 }
+
+func (app *application) invalidAuthenticationTokenResponse(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("WWW-Authenticate", "Bearer")
+	message := "invalid or missing authentication token"
+	app.errorResponse(w, r, http.StatusUnauthorized, message)
+}

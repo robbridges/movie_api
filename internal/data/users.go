@@ -22,6 +22,7 @@ type User struct {
 }
 
 var (
+	AnonymousUser     = &User{}
 	ErrDuplicateEmail = errors.New("duplicate email")
 )
 
@@ -211,4 +212,8 @@ func (m UserModel) GetForToken(tokenScope, tokenPlaintext string) (*User, error)
 		}
 	}
 	return &user, nil
+}
+
+func (u *User) isAnonymous() bool {
+	return u == AnonymousUser
 }
