@@ -16,7 +16,7 @@ type User struct {
 	CreatedAt time.Time `json:"created_at"`
 	Name      string    `json:"name"`
 	Email     string    `json:"email"`
-	Password  password  `json:"-"`
+	Password  Password  `json:"-"`
 	Activated bool      `json:"activated"`
 	Version   int       `json:"-"`
 }
@@ -25,7 +25,7 @@ var (
 	ErrDuplicateEmail = errors.New("duplicate email")
 )
 
-type password struct {
+type Password struct {
 	plaintext *string
 	hash      []byte
 }
@@ -34,7 +34,7 @@ type UserModel struct {
 	DB *sql.DB
 }
 
-func (p *password) Set(plaintextPassword string) error {
+func (p *Password) Set(plaintextPassword string) error {
 	hash, err := bcrypt.GenerateFromPassword([]byte(plaintextPassword), 12)
 	if err != nil {
 		return err
@@ -46,7 +46,7 @@ func (p *password) Set(plaintextPassword string) error {
 	return nil
 }
 
-func (p *password) Matches(plaintextPassword string) (bool, error) {
+func (p *Password) Matches(plaintextPassword string) (bool, error) {
 	err := bcrypt.CompareHashAndPassword(p.hash, []byte(plaintextPassword))
 	if err != nil {
 		switch {
@@ -65,9 +65,9 @@ func ValidateEmail(v *validator.Validator, email string) {
 }
 
 func ValidatePasswordPlaintext(v *validator.Validator, password string) {
-	v.Check(password != "", "password", "must be provided")
-	v.Check(len(password) >= 8, "password", "must at least be 8 characters long")
-	v.Check(len(password) <= 72, "password", "must not be more than 72 bytes long")
+	v.Check(password != "", "Password", "must be provided")
+	v.Check(len(password) >= 8, "Password", "must at least be 8 characters long")
+	v.Check(len(password) <= 72, "Password", "must not be more than 72 bytes long")
 }
 
 func ValidateUser(v *validator.Validator, user *User) {
@@ -82,7 +82,7 @@ func ValidateUser(v *validator.Validator, user *User) {
 
 	// we've messed up if this is hit
 	if user.Password.hash == nil {
-		panic("missing password hash")
+		panic("missing Password hash")
 	}
 }
 
