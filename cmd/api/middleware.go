@@ -128,21 +128,28 @@ func (app *application) authenticate(next http.Handler) http.Handler {
 	})
 }
 
-// make handler func so that we can wrap certain routes and not the entire router
-func (app *application) requireActivatedUser(next http.HandlerFunc) http.HandlerFunc {
+func (app *application) requireAuthenticatedUser(next http.HandlerFunc) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		user := app.contextGetUser(r)
-
 		if user.IsAnonymous() {
 			app.authenticationRequiredResponse(w, r)
 			return
 		}
+		next.ServeHTTP(w, r)
+	})
+}
 
+// Checks that a user is both authenticated and activated.
+func (app *application) requireActivatedUser(next http.HandlerFunc) http.HandlerFunc {
+	fn := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		user := app.contextGetUser(r)
+		// Check that a user is activated.
 		if !user.Activated {
 			app.inactiveAccountResponse(w, r)
 			return
 		}
-
 		next.ServeHTTP(w, r)
 	})
+	// wrap require authenticated user with the require activated user
+	return app.requireAuthenticatedUser(fn)
 }
