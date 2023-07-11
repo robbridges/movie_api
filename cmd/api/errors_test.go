@@ -143,6 +143,18 @@ func TestErrorResponses(t *testing.T) {
 			statusCode: http.StatusUnauthorized,
 			message:    "invalid or missing authentication token",
 		},
+		{
+			name:       "AuthenticationRequiredResponse",
+			handler:    app.authenticationRequiredResponse,
+			statusCode: http.StatusUnauthorized,
+			message:    "you must be authenticated to access this resource",
+		},
+		{
+			name:       "InactiveAccountResponse",
+			handler:    app.inactiveAccountResponse,
+			statusCode: http.StatusForbidden,
+			message:    "please activate your account before using this resource",
+		},
 	}
 
 	for _, tt := range tests {
