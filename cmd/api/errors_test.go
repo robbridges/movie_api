@@ -155,6 +155,12 @@ func TestErrorResponses(t *testing.T) {
 			statusCode: http.StatusForbidden,
 			message:    "please activate your account before using this resource",
 		},
+		{
+			name:       "NotPermittedResponse",
+			handler:    app.notPermittedResponse,
+			statusCode: http.StatusForbidden,
+			message:    "your account doesn't have the permissions for this resource",
+		},
 	}
 
 	for _, tt := range tests {
