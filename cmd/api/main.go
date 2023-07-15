@@ -1,6 +1,7 @@
 package main
 
 import (
+	"expvar"
 	"flag"
 	"fmt"
 	_ "github.com/lib/pq"
@@ -9,8 +10,10 @@ import (
 	"movie_api/internal/jsonlog"
 	"movie_api/internal/mailer"
 	"os"
+	"runtime"
 	"strings"
 	"sync"
+	"time"
 )
 
 const (
@@ -85,6 +88,16 @@ func main() {
 	cfg.smtp.sender = "support@moviebuffs.com"
 
 	logger := jsonlog.New(os.Stdout, jsonlog.LevelInfo)
+
+	expvar.NewString("version").Set(version)
+
+	expvar.Publish("goroutines", expvar.Func(func() any {
+		return runtime.NumGoroutine()
+	}))
+
+	expvar.Publish("timestamp", expvar.Func(func() any {
+		return time.Now().Unix()
+	}))
 
 	app := &application{
 		config: cfg,
